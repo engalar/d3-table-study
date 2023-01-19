@@ -17,7 +17,7 @@ d3.MxGrid = function () {
           .data(columns, columnid);
         colgroupSelection.exit().remove();
         colgroupSelection.enter().append("col");
-        colgroupSelection.style('width', d => d.width ? d.width + 'px' : undefined);
+        colgroupSelection.style('width', d => d.width !== null ? d.width + 'px' : undefined);
       }
       updateCol();
 
@@ -53,16 +53,21 @@ d3.MxGrid = function () {
             })
             .on("drag", function (e) {
               delta = e.x - lastX;
+              const restRightWidth = d3.sum(lastWidths2.slice(columnIndx + 1));
+
+              if (lastWidths2[columnIndx] + delta < 50 || restRightWidth - delta < 50 * (lastWidths2.length - columnIndx - 1)) return;
+
               columns[columnIndx].width = lastWidths2[columnIndx] + delta;
-              container
-                .select("colgroup")
-              // .selectAll("col").nodes()[columnIndx].style.width = `${lastWidths2[columnIndx] + delta}px`
-              const restWidth = d3.sum(lastWidths2.slice(columnIndx + 1));
+
               const x = d3.scaleLinear()
-                .domain([0, restWidth])
-                .range([0, restWidth - delta]);
-              for (let index = columnIndx + 1; index < lastWidths2.length; index++) {
-                columns[index].width = x(lastWidths2[index]);
+                .domain([0, restRightWidth])
+                .range([0, restRightWidth - delta]);
+              for (let index = 0; index < lastWidths2.length; index++) {
+                if (index > columnIndx) {
+                  columns[index].width = x(lastWidths2[index]);
+                } else if (index < columnIndx) {
+                  columns[index].width = lastWidths2[index];
+                }
               }
               updateCol();
             })
@@ -212,7 +217,7 @@ const mg = d3
   .selected(["零件-3.2", "零件-5.2"])
   .columns(
     [
-      { caption: "Name", key: "name", width: 20 },
+      { caption: "Name", key: "name", width: 70 },
       { caption: "Other", key: "other" }
     ],
     function (d) {
