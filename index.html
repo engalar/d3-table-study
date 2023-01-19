@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Parcel Sandbox</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="theme.compiled.css" />
+
+</head>
+
+<body style="padding: 20px;">
+  <h1 id="debug"></h1>
+  <br />
+  <div class="form-group">
+    <input type="text" class="form-control" />
+  </div>
+  <br />
+  <div class="mx-compound-control">
+    <select class="form-control">
+      <option value=""></option>
+      <option value="13792273858822279">
+        B1
+      </option>
+      <option selected value="13792273858822525">B2</option>
+      <option disabled value="13792273858822521">B3</option>
+    </select>
+  </div>
+  <br />
+  <div class="mx-compound-control" data-focusindex="0">
+    <input type="text" class="form-control" readonly="" value="B1, B2" /><button type="button"
+      class="btn mx-button mx-referencesetselector-select-button">
+      <span class="glyphicon glyphicon-share-alt"></span>
+    </button>
+  </div>
+  <br />
+  <div class="radio">
+    <input type="radio" value="B" />
+    <label>B</label>
+  </div>
+  <br />
+  <div class="mx-grid mx-datagrid datagrid-hover datagrid-bordered datagrid-sm mx-name-grid1"
+    id="mxui_widget_DataGrid_0" data-mendix-id="35.MyFirstModule.Part_Overview.grid1" data-focusindex="0"
+    widgetid="mxui_widget_DataGrid_0">
+    <div class="mx-grid-searchbar" dojoattachpoint="searchNode" style="display: none;">
+      <div class="mx-grid-search-inputs" dojoattachpoint="searchArgumentNode">
+        <div class="mx-grid-search-item" id="mxui_widget_SearchInput_0" widgetid="mxui_widget_SearchInput_0">
+          <div class="mx-grid-search-label"><label>Name</label></div>
+          <div class="mx-grid-search-input mx-name-searchField1">
+            <input type="text" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="mx-grid-search-controls" dojoattachpoint="searchControlNode">
+        <button type="button" class="btn mx-button btn-default mx-name-search mx-grid-search-button"
+          id="mxui_widget_Button_0" widgetid="mxui_widget_Button_0">
+          Search</button><button type="button" class="btn mx-button btn-default mx-name-reset mx-grid-reset-button"
+          id="mxui_widget_Button_1" widgetid="mxui_widget_Button_1">
+          Reset
+        </button>
+      </div>
+      <div class="mx-grid-search-message" dojoattachpoint="messageNode" style="display: none;"></div>
+    </div>
+
+    <div class="mx-grid-controlbar" dojoattachpoint="controlNode">
+      <div class="mx-grid-toolbar" dojoattachpoint="toolBarNode">
+        <button type="button" class="btn mx-button mx-name-searchButton1 btn-default"
+          id="mxui_widget_ControlBarButton_0" data-mendix-id="35.MyFirstModule.Part_Overview.searchButton1" title=""
+          widgetid="mxui_widget_ControlBarButton_0" data-roving-tabindex="" tabindex="0">
+          Search</button><button type="button" class="btn mx-button mx-name-newButton1 btn-default"
+          id="mxui_widget_ControlBarButton_1" data-mendix-id="35.MyFirstModule.Part_Overview.newButton1" title=""
+          widgetid="mxui_widget_ControlBarButton_1" data-roving-tabindex="" tabindex="-1">
+          New</button><button type="button" class="btn mx-button mx-name-actionButton2 btn-default"
+          id="mxui_widget_ControlBarButton_2" data-mendix-id="35.MyFirstModule.Part_Overview.actionButton2" title=""
+          widgetid="mxui_widget_ControlBarButton_2" data-roving-tabindex="" tabindex="-1">
+          Edit</button><button type="button" class="btn mx-button mx-name-actionButton1 btn-default"
+          id="mxui_widget_ControlBarButton_3" data-mendix-id="35.MyFirstModule.Part_Overview.actionButton1" title=""
+          widgetid="mxui_widget_ControlBarButton_3" data-roving-tabindex="" tabindex="-1">
+          Delete
+        </button>
+      </div>
+      <div class="mx-grid-pagingbar" dojoattachpoint="pagingBarNode" role="navigation" aria-label="Pagination">
+        <button type="button" class="btn mx-button mx-name-paging-first" id="mxui_widget_Button_2"
+          aria-label="Go to first page" widgetid="mxui_widget_Button_2" data-roving-tabindex="" tabindex="-1"
+          disabled="disabled">
+          <span class="glyphicon glyphicon-step-backward"></span></button><button type="button"
+          class="btn mx-button mx-name-paging-previous" id="mxui_widget_Button_3" aria-label="Go to previous page"
+          widgetid="mxui_widget_Button_3" data-roving-tabindex="" tabindex="-1" disabled="disabled">
+          <span class="glyphicon glyphicon-backward"></span>
+        </button>
+        <div class="dijitInline mx-grid-paging-status" aria-hidden="true">
+          1 to 20 of 999
+        </div>
+        <span class="sr-only" tabindex="0" data-roving-tabindex="">Currently showing 1 to 20 of 999</span>
+        <button type="button" class="btn mx-button mx-name-paging-next" id="mxui_widget_Button_4"
+          aria-label="Go to next page" widgetid="mxui_widget_Button_4" data-roving-tabindex="" tabindex="-1">
+          <span class="glyphicon glyphicon-forward"></span></button><button type="button"
+          class="btn mx-button mx-name-paging-last" id="mxui_widget_Button_5" aria-label="Go to last page"
+          widgetid="mxui_widget_Button_5" data-roving-tabindex="" tabindex="-1">
+          <span class="glyphicon glyphicon-step-forward"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mx-grid-content" dojoattachpoint="contentNode" style="height: auto;">
+      <table>
+        <caption class="sr-only"></caption>
+        <colgroup></colgroup>
+        <thead>
+          <tr class="mx-name-head-row"></tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot style="display: none;"></tfoot>
+      </table>
+    </div>
+  </div>
+  <script src="src/index.js"></script>
+</body>
+
+</html>
