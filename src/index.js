@@ -56,8 +56,15 @@ d3.MxGrid = function () {
               columns[columnIndx].width = lastWidths2[columnIndx] + delta;
               container
                 .select("colgroup")
-                // .selectAll("col").nodes()[columnIndx].style.width = `${lastWidths2[columnIndx] + delta}px`
-                updateCol();
+              // .selectAll("col").nodes()[columnIndx].style.width = `${lastWidths2[columnIndx] + delta}px`
+              const restWidth = d3.sum(lastWidths2.slice(columnIndx + 1));
+              const x = d3.scaleLinear()
+                .domain([0, restWidth])
+                .range([0, restWidth - delta]);
+              for (let index = columnIndx + 1; index < lastWidths2.length; index++) {
+                columns[index].width = x(lastWidths2[index]);
+              }
+              updateCol();
             })
             .on("start", function (e) {
               lastX = e.x;
