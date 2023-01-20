@@ -10,149 +10,96 @@ d3.MxGrid = function () {
 
   function mxGrid(container) {
     function render() {
-      function updateCol() {
+      maintainCol();
+      maintainTh();
+
+      maintainTr();
+      maintainTd();
+      updateTd();
+
+      function maintainCol() {
         const colgroupSelection = container
           .select("colgroup")
           .selectAll("col")
-          .data(columns, columnid);
+          .data(
+            columns.filter((d) => !d.hidden),
+            columnid
+          );
         colgroupSelection.exit().remove();
         colgroupSelection.enter().append("col");
-        colgroupSelection.style('width', d => d.width !== null ? d.width + 'px' : undefined);
+        colgroupSelection.style("width", (d) =>
+          d.width !== null ? d.width + "px" : undefined
+        );
       }
-      updateCol();
+      function maintainTh() {
+        const thSelection = container
+          .select(".mx-name-head-row")
+          .selectAll("th")
+          .data(
+            columns.filter((d) => !d.hidden),
+            columnid
+          );
+        thSelection.exit().remove();
 
-      const thSelection = container
-        .select(".mx-name-head-row")
-        .selectAll("th")
-        .data(columns, columnid);
-      thSelection.exit().remove();
-
-      thSelection
-        .enter()
-        .append("th")
-        .classed("mx-left-aligned", true)
-        .attr("title", (d) => d.caption)
-        .html(
-          (d, i) => `<div class="mx-datagrid-sort-icon" style="display: block;">
-        <span class="mx-datagrid-sort-text">▲</span>
+        let hidden = true;
+        thSelection
+          .enter()
+          .append("th")
+          .classed("mx-left-aligned", true)
+          .attr("title", (d) => d.caption)
+          .html(
+            (
+              d,
+              i
+            ) => `<div class="mx-datagrid-sort-icon" style="display: block;">
+        <span class="mx-datagrid-sort-text">${d.sort === "desc" ? "▼" : d.sort === "asc" ? "▲" : ""
+              }</span>
       </div>
       <div class="mx-datagrid-head-caption">${d.caption}</div>
       ${i > 0 ? '<div class="mx-datagrid-column-resizer">' : ""}</div>`
-        );
-
-      //drag resize col
-      let lastX, delta, lastWidths2, columnIndx;
-      container
-        .select(".mx-name-head-row")
-        .selectAll(".mx-datagrid-column-resizer")
-        .call(
-          d3
-            .drag()
-            .container(function () {
-              return this.parentElement.parentElement;
-            })
-            .on("drag", function (e) {
-              delta = e.x - lastX;
-              const restRightWidth = d3.sum(lastWidths2.slice(columnIndx + 1));
-
-              if (lastWidths2[columnIndx] + delta < 50 || restRightWidth - delta < 50 * (lastWidths2.length - columnIndx - 1)) return;
-
-              columns[columnIndx].width = lastWidths2[columnIndx] + delta;
-
-              const x = d3.scaleLinear()
-                .domain([0, restRightWidth])
-                .range([0, restRightWidth - delta]);
-              for (let index = 0; index < lastWidths2.length; index++) {
-                if (index > columnIndx) {
-                  columns[index].width = x(lastWidths2[index]);
-                } else if (index < columnIndx) {
-                  columns[index].width = lastWidths2[index];
-                }
-              }
-              updateCol();
-            })
-            .on("start", function (e) {
-              lastX = e.x;
-              lastWidths2 = container
-                .select("colgroup")
-                .selectAll("col")
-                .nodes()
-                .map((d) => d.clientWidth);
-
-              columnIndx = columns.indexOf(e.sourceEvent.target.parentElement.__data__) - 1;
-
-              d3.select("#debug").html(JSON.stringify(lastWidths2));
-            })
-            .on("end", function (e) {
-              console.log("end", e);
-              // e.sourceEvent.preventDefault();
-              //debugger;
-            })
-        );
-
-      async function animation() {
-        const lastWidths = container
-          .select("colgroup")
-          .selectAll("col")
-          .nodes()
-          .map((d) => d.clientWidth);
-
-        const avgWidth =
-          container.select("colgroup").node().clientWidth / columns.length;
-
-
-
-        //更新列宽
-        await container
-          .select("colgroup")
-          .selectAll("col")
-          .style("width", function (d, i) {
-            return lastWidths[i] + "px";
-          })
-          .transition()
-          .style("width", function (d, i) {
-            //return lastWidths[i] + "px";
-            return avgWidth + "px";
-          })
-          .duration(800)
-          .ease(d3.easeBounce)
-          .end();
+          )
+          .on("click", function (e) {
+            hidden = !hidden;
+            columns.slice(1, 3).forEach(d => d.hidden = hidden);
+            render();
+          });
       }
 
-      /*       animation()
-              .then(updateCellText)
-              .catch(console.log); */
-      updateCellText();
+      function maintainTr() {
+        const trSelection = container
+          .select("tbody")
+          .selectAll("tr")
+          .data(data, dataid);
+        trSelection.exit().remove();
+        trSelection
+          .enter()
+          .append("tr")
+          .style("height", "37px") //TODO css
+          .classed("selected", (d) => selectedKeys.includes(dataid(d)));
+      }
 
-      const trSelection = container
-        .select("tbody")
-        .selectAll("tr")
-        .data(data, dataid);
-      trSelection.exit().remove();
-      trSelection
-        .enter()
-        .append("tr")
-        .style('height', '37px')//TODO css
-        .classed("selected", (d) => selectedKeys.includes(dataid(d)));
+      function maintainTd() {
+        container
+          .select("tbody")
+          .selectAll("tr")
+          .each(function (d) {
+            const tdSelection = d3
+              .select(this)
+              .selectAll("td")
+              .data(
+                columns.filter((d) => !d.hidden),
+                columnid
+              );
+            tdSelection.exit().remove();
+            tdSelection
+              .enter()
+              .append("td")
+              .append("div")
+              .classed("mx-datagrid-data-wrapper", true);
+          });
+      }
 
-      //更新行内td
-      container
-        .select("tbody")
-        .selectAll("tr")
-        .each(function (d) {
-          const tdSelection = d3
-            .select(this)
-            .selectAll("td")
-            .data(columns, columnid);
-          tdSelection.exit().remove();
-          tdSelection
-            .enter()
-            .append("td")
-            .append("div")
-            .classed("mx-datagrid-data-wrapper", true);
-        });
-
-      function updateCellText() {
+      function updateTd() {
         container
           .select("tbody")
           .selectAll("tr")
@@ -201,6 +148,8 @@ d3.MxGrid = function () {
   return mxGrid;
 };
 
+/////////////////////////////////////////////////////////////////////////////////
+
 const mg = d3
   .MxGrid(".mx-grid")
   .data(
@@ -211,14 +160,21 @@ const mg = d3
       { name: "零件-3.2", other: "other3" },
       { name: "零件-1.2", other: "other1" },
       { name: "零件-2", other: "other2" }
-    ],
+    ].map((d) => ({
+      ...d,
+      ...{ name1: d.name, name2: d.name, name3: d.name }
+    })),
     (d) => d && d.name
   )
   .selected(["零件-3.2", "零件-5.2"])
   .columns(
     [
-      { caption: "Name", key: "name", width: 70 },
-      { caption: "Other", key: "other" }
+      { caption: "Group", width: 50 },
+      { caption: "Name", hidden: true, key: "name", sort: "asc" },
+      { caption: "Name1", hidden: true, key: "name1" },
+      { caption: "Name2", hidden: true, key: "name2" },
+      { caption: "Name3", hidden: true, key: "name3" },
+      { caption: "Other", key: "other", sort: "desc" }
     ],
     function (d) {
       return d && d.caption;
@@ -228,34 +184,3 @@ const mg = d3
 d3.select(".mx-grid").call(mg);
 
 mg.render();
-
-// 动态调整列数量
-d3.select("#mxui_widget_ControlBarButton_0").on("click", function () {
-  mg.columns(
-    [
-      { caption: "Name", key: "name" },
-      { caption: "Name1", key: "name1" },
-      { caption: "Name2", key: "name2" },
-      { caption: "Name3", key: "name3" },
-      { caption: "Other", key: "other" }
-    ],
-    function (d) {
-      return d && d.caption;
-    }
-  )
-    .data(
-      [
-        { name: "零件-6.2", other: "other6" },
-        { name: "零件-5.2", other: "other5" },
-        { name: "零件-4.2", other: "other4" },
-        { name: "零件-3.2", other: "other3" },
-        { name: "零件-1.2", other: "other1" },
-        { name: "零件-2", other: "other2" }
-      ].map((d) => ({
-        ...d,
-        ...{ name1: d.name, name2: d.name, name3: d.name }
-      })),
-      (d) => d && d.name
-    )
-    .render();
-});
